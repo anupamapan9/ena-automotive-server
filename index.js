@@ -41,6 +41,13 @@ async function run() {
 
 
 
+        // all the get method 
+        app.get('/product', async (req, res) => {
+            const query = {}
+            const result = await productsCollection.find(query).toArray()
+            res.send(result)
+        })
+
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
