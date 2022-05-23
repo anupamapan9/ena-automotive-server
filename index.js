@@ -37,21 +37,18 @@ async function run() {
         // Database Collection  start -------------------
         const productsCollection = client.db('enaAutomotive').collection('products');
         const usersCollection = client.db('enaAutomotive').collection('users');
+        const ordersCollection = client.db('enaAutomotive').collection('orders');
         // Database Collection  End -------------------
 
 
 
-        // all the get method
 
-
-        // all products  ---***--- 
+        // products  ---***--- 
         app.get('/product', async (req, res) => {
             const query = {}
             const result = await productsCollection.find(query).toArray()
             res.send(result)
         })
-        // get products by id --**--
-
         app.get('/product/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -59,7 +56,7 @@ async function run() {
             res.send(result)
         })
 
-        // all put method ------------************-----------
+        // Users Api ------------************-----------
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -72,6 +69,19 @@ async function run() {
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET, { expiresIn: '1d' });
             // console.log()
             res.send({ result, token })
+        })
+
+
+        // orders apis 
+        app.post('/order', verifyJWT, async (req, res) => {
+            console.log('hello')
+            const order = req.body;
+            console.log(order)
+            const result = await ordersCollection.insertOne(order)
+            res.send(result)
+        })
+        app.get('/order', async (req, res) => {
+            req.send('go corona')
         })
 
         app.get('/db', (req, res) => {
