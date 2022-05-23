@@ -40,6 +40,19 @@ async function run() {
         const ordersCollection = client.db('enaAutomotive').collection('orders');
         // Database Collection  End -------------------
 
+
+
+        // verify admin 
+        const verifyAdmin = async (req, res, next) => {
+            const email = req.params.email;
+            const requester = req.decoded.email;
+            const requesterAccount = await usersCollection.findOne({ email: requester })
+            if (requesterAccount.role === 'admin') {
+                next()
+            } else {
+                res.status(403).send({ message: 'Forbidden Access' })
+            }
+        }
         // Users Api ------------************-----------
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
@@ -68,19 +81,12 @@ async function run() {
         // make admin 
         app.put('/user/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
-            const requester = req.decoded.email;
-            const requesterAccount = await usersCollection.findOne({ email: requester })
-            if (requesterAccount.role === 'admin') {
-                const filter = { email: email }
-                const updateDoc = {
-                    $set: { role: 'admin' }
-                };
-                const result = await usersCollection.updateOne(filter, updateDoc)
-                res.send(result)
-            } else {
-                res.status(403).send({ message: 'Forbidden Access' })
-            }
-
+            const filter = { email: email }
+            const updateDoc = {
+                $set: { role: 'admin' }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc)
+            res.send(result)
         })
 
         app.get('/admin/:email', async (req, res) => {
