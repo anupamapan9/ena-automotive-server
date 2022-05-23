@@ -55,7 +55,10 @@ async function run() {
             res.send({ result, token })
         })
 
-
+        app.get('/user', verifyJWT, async (req, res) => {
+            const user = await usersCollection.find().toArray()
+            res.send(user)
+        })
 
         // products  ---***--- 
         app.get('/product', async (req, res) => {
@@ -90,7 +93,6 @@ async function run() {
         })
         app.get('/order/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
-            console.log(email)
             const query = { orderer: email }
             const result = await ordersCollection.find(query).toArray()
             res.send(result)
