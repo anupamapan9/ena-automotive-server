@@ -40,22 +40,6 @@ async function run() {
         const ordersCollection = client.db('enaAutomotive').collection('orders');
         // Database Collection  End -------------------
 
-
-
-
-        // products  ---***--- 
-        app.get('/product', async (req, res) => {
-            const query = {}
-            const result = await productsCollection.find(query).toArray()
-            res.send(result)
-        })
-        app.get('/product/:id', verifyJWT, async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) }
-            const result = await productsCollection.findOne(query)
-            res.send(result)
-        })
-
         // Users Api ------------************-----------
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
@@ -72,17 +56,39 @@ async function run() {
         })
 
 
+
+        // products  ---***--- 
+        app.get('/product', async (req, res) => {
+            const query = {}
+            const result = await productsCollection.find(query).toArray()
+            res.send(result)
+        })
+        app.get('/product/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.findOne(query)
+            res.send(result)
+        })
+        app.put('/product/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const product = req.body;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: product
+            };
+            const result = await productsCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
+
         // orders apis 
         app.post('/order', verifyJWT, async (req, res) => {
-            console.log('hello')
             const order = req.body;
-            console.log(order)
             const result = await ordersCollection.insertOne(order)
             res.send(result)
         })
-        app.get('/order', async (req, res) => {
-            req.send('go corona')
-        })
+
 
         app.get('/db', (req, res) => {
             res.send('Hello inside World!')
