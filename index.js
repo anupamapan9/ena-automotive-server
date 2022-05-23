@@ -88,7 +88,13 @@ async function run() {
             const result = await ordersCollection.insertOne(order)
             res.send(result)
         })
-
+        app.get('/order/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            console.log(email)
+            const query = { orderer: email }
+            const result = await ordersCollection.find(query).toArray()
+            res.send(result)
+        })
 
         app.get('/db', (req, res) => {
             res.send('Hello inside World!')
