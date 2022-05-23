@@ -3,7 +3,7 @@ const app = express()
 const port = process.env.PORT || 5000
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { MongoClient, ServerApiVersion, Collection } = require('mongodb');
+const { MongoClient, ServerApiVersion, Collection, ObjectId } = require('mongodb');
 
 require('dotenv').config()
 
@@ -41,13 +41,25 @@ async function run() {
 
 
 
-        // all the get method 
+        // all the get method
+
+
+        // all products  ---***--- 
         app.get('/product', async (req, res) => {
             const query = {}
             const result = await productsCollection.find(query).toArray()
             res.send(result)
         })
+        // get products by id --**--
 
+        app.get('/product/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.findOne(query)
+            res.send(result)
+        })
+
+        // all put method ------------************-----------
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -62,9 +74,10 @@ async function run() {
             res.send({ result, token })
         })
 
-        app.get('/db', verifyJWT, (req, res) => {
-            res.send({ response: 'Inside DB' })
+        app.get('/db', (req, res) => {
+            res.send('Hello inside World!')
         })
+
 
     } finally {
 
