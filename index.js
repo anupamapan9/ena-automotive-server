@@ -38,6 +38,7 @@ async function run() {
         const productsCollection = client.db('enaAutomotive').collection('products');
         const usersCollection = client.db('enaAutomotive').collection('users');
         const ordersCollection = client.db('enaAutomotive').collection('orders');
+        const reviewsCollection = client.db('enaAutomotive').collection('reviews');
         // Database Collection  End -------------------
 
 
@@ -68,7 +69,7 @@ async function run() {
             res.send({ result, token })
         })
 
-        app.get('/user', verifyJWT, async (req, res) => {
+        app.get('/user', verifyJWT, verifyAdmin, async (req, res) => {
             const user = await usersCollection.find().toArray()
             res.send(user)
         })
@@ -79,7 +80,7 @@ async function run() {
 
         // admin   --------------------------------
         // make admin 
-        app.put('/user/admin/:email', verifyJWT, async (req, res) => {
+        app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email }
             const updateDoc = {
@@ -135,6 +136,20 @@ async function run() {
             const email = req.params.email;
             const query = { orderer: email }
             const result = await ordersCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        // review -------------------************************
+
+        app.post('/review', verifyJWT, async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review)
+            res.send(result)
+        })
+
+        app.get('/review', async (req, res) => {
+            const query = {}
+            const result = await reviewsCollection.find(query).toArray()
             res.send(result)
         })
 
