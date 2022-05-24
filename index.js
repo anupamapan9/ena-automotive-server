@@ -73,8 +73,25 @@ async function run() {
             const user = await usersCollection.find().toArray()
             res.send(user)
         })
+        app.get('/user/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email }
+            const user = await usersCollection.findOne(filter)
+            res.send(user)
+        })
 
 
+        app.put('/user/update/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: user
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
 
 
 
@@ -150,7 +167,8 @@ async function run() {
         app.get('/review', async (req, res) => {
             const query = {}
             const result = await reviewsCollection.find(query).toArray()
-            res.send(result)
+            const newestReview = result.reverse()
+            res.send(newestReview)
         })
 
         app.get('/db', (req, res) => {
