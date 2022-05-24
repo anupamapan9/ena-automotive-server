@@ -124,6 +124,13 @@ async function run() {
             const result = await productsCollection.find(query).toArray()
             res.send(result)
         })
+
+        // upload a product 
+        app.post('/review', verifyJWT, verifyAdmin, async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product)
+            res.send(result)
+        })
         app.get('/product/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -143,7 +150,7 @@ async function run() {
         })
 
 
-        // orders apis 
+        // orders apis -------------------------
         app.post('/order', verifyJWT, async (req, res) => {
             const order = req.body;
             const result = await ordersCollection.insertOne(order)
