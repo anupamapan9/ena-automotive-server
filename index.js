@@ -39,6 +39,7 @@ async function run() {
         const usersCollection = client.db('enaAutomotive').collection('users');
         const ordersCollection = client.db('enaAutomotive').collection('orders');
         const reviewsCollection = client.db('enaAutomotive').collection('reviews');
+        const paymentsCollection = client.db('enaAutomotive').collection('payments');
         // Database Collection  End -------------------
 
 
@@ -189,6 +190,21 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await ordersCollection.deleteOne(query)
             res.send(result)
+        })
+        app.put('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const status = payment.status
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    status
+                }
+            };
+            const result = await ordersCollection.updateOne(filter, updateDoc, options)
+            const paymentConfirm = await paymentsCollection.insertOne(payment)
+            res.send(updateDoc)
         })
         // review -------------------************************
 
