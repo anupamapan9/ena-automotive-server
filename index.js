@@ -103,7 +103,6 @@ async function run() {
                 currency: 'usd',
                 payment_method_types: ['card']
             });
-            console.log('hello')
             res.send({ clientSecret: paymentIntent.client_secret })
         });
         // admin   --------------------------------
