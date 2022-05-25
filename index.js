@@ -45,7 +45,6 @@ async function run() {
 
         // verify admin 
         const verifyAdmin = async (req, res, next) => {
-            const email = req.params.email;
             const requester = req.decoded.email;
             const requesterAccount = await usersCollection.findOne({ email: requester })
             if (requesterAccount.role === 'admin') {
@@ -126,7 +125,7 @@ async function run() {
         })
 
         // upload a product 
-        app.post('/review', verifyJWT, verifyAdmin, async (req, res) => {
+        app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
             const product = req.body;
             const result = await productsCollection.insertOne(product)
             res.send(result)
@@ -167,7 +166,12 @@ async function run() {
             const result = await ordersCollection.find(query).toArray()
             res.send(result)
         })
-
+        app.delete('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await ordersCollection.deleteOne(query)
+            res.send(result)
+        })
         // review -------------------************************
 
         app.post('/review', verifyJWT, async (req, res) => {
