@@ -195,6 +195,29 @@ async function run() {
             const id = req.params.id;
             const payment = req.body;
             const status = payment.status
+            const transactionId = payment.transactionId
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    status,
+                    transactionId
+                }
+            };
+            const result = await ordersCollection.updateOne(filter, updateDoc, options)
+            const paymentConfirm = await paymentsCollection.insertOne(payment)
+            res.send(result)
+        })
+        app.get('/order', verifyJWT, verifyAdmin, async (req, res) => {
+            const result = await ordersCollection.find().toArray()
+            res.send(result)
+        })
+
+
+        app.put('/order/shipped/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const status = payment.status
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true }
             const updateDoc = {
@@ -203,8 +226,7 @@ async function run() {
                 }
             };
             const result = await ordersCollection.updateOne(filter, updateDoc, options)
-            const paymentConfirm = await paymentsCollection.insertOne(payment)
-            res.send(updateDoc)
+            res.send(result)
         })
         // review -------------------************************
 
