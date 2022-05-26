@@ -18,7 +18,7 @@ This project for an automotive parts manufacturer company. Who build the parts a
 - Stripe
 
 ### `Live Site :` [https://ena-automotive.web.app/](https://ena-automotive.web.app/)
-### `Server Repo :` [https://github.com/programming-hero-web-course1/manufacturer-website-server-side-anupamapan9](https://github.com/programming-hero-web-course1/manufacturer-website-server-side-anupamapan9)
+### `Client Repo :` [https://github.com/programming-hero-web-course1/manufacturer-website-client-side-anupamapan9](https://github.com/programming-hero-web-course1/manufacturer-website-client-side-anupamapan9)
 
 
 `admin access`
